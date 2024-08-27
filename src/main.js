@@ -2,7 +2,12 @@ import { Cartesian3, Ion, Terrain, Viewer } from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import { loadBall } from "./ball";
 import { loadCzml } from "./czml";
-import { drawCircleAroundSatellite, drawCone, drawCone2, drawLine } from "./draw";
+import {
+  drawCircleAroundSatellite,
+  drawCone2,
+  drawLine
+} from "./draw";
+import { leftClickHandler } from "./eventHandler";
 import { loadSatellite } from "./satellite";
 import "./style.css";
 
@@ -14,14 +19,13 @@ const viewer = new Viewer("cesiumContainer", {
 });
 
 loadCzml(viewer);
-const satellite = loadSatellite(
-  viewer,
-  Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
-);
-const ball = loadBall(viewer, Cartesian3.fromDegrees(120.0988, 0, 4000));
+loadSatellite(viewer, Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000));
+loadBall(viewer, Cartesian3.fromDegrees(120.0988, 0, 4000));
 drawCircleAroundSatellite(
   viewer,
-  Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
+  Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000)
 );
 drawLine(viewer);
 drawCone2(viewer);
+
+leftClickHandler(viewer);
