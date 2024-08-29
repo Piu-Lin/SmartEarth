@@ -398,7 +398,13 @@ export function drawCone4(viewer) {
   function getColorForSegment(segmentIndex, totalSegments) {
     const normalizedIndex = segmentIndex / totalSegments;
     const alpha = Math.pow(1.0 - normalizedIndex, 2); // 非线性变化，指数为2
-    return new Color(1.0, 0.0, 0.0, alpha); // 红色(RGB: 1, 0, 0)基础上调整alpha
+
+    // 计算从绿色到黄色的渐变
+    const red = 0.5 * normalizedIndex;
+    const green = 0.7 * (1 - normalizedIndex);
+    const blue = 0.1;
+
+    return new Color(red, green, blue, alpha);
   }
 
   // 生成旋转矩阵，分别绕赤道方向旋转42.6/2度（正向和反向）
