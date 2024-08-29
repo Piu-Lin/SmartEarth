@@ -2,8 +2,14 @@ import { Cartesian3, Ion, Terrain, Viewer } from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import { loadBall } from "./ball";
 import { loadCzml } from "./czml";
-import { drawCircleAroundSatellite, drawCone, drawCone3, drawCone4, drawLine } from "./draw";
-import { loadSatellite } from "./satellite";
+import {
+  drawCircleAroundSatellite,
+  drawCone,
+  drawCone3,
+  drawCone4,
+  drawLine,
+} from "./draw";
+import { loadSatellite, loadSpaceShuttle, loadYacht } from "./models";
 import "./style.css";
 
 Ion.defaultAccessToken =
@@ -13,15 +19,22 @@ const viewer = new Viewer("cesiumContainer", {
   terrain: Terrain.fromWorldTerrain(),
 });
 
+/** 模型位置 */
+const positions = {
+  satellite: Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
+  ball: Cartesian3.fromDegrees(120.0988, 0, 4000),
+  circle: Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
+  spaceShuttle: Cartesian3.fromDegrees(120.0988, 23.123, 5000),
+  yacht: Cartesian3.fromDegrees(120.0988, -25.023),
+};
+
+/** 加载模型 */
 loadCzml(viewer);
-const satellite = loadSatellite(
-  viewer,
-  Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
-);
-const ball = loadBall(viewer, Cartesian3.fromDegrees(120.0988, 0, 4000));
-drawCircleAroundSatellite(
-  viewer,
-  Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
-);
-// drawLine(viewer);
-drawCone4(viewer);
+loadSatellite(viewer, positions["satellite"]); // 卫星
+loadBall(viewer, positions["ball"]); // 地面接收站球体
+loadSpaceShuttle(viewer, positions["spaceShuttle"]); // 航天飞机
+loadYacht(viewer, positions["yacht"]); // 游艇
+
+/** 绘制线条 */
+drawCircleAroundSatellite(viewer, positions["circle"]); // 卫星轨迹线
+drawCone4(viewer); // 卫星信号四棱锥
