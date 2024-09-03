@@ -30,8 +30,8 @@ export function loadYacht(viewer, position) {
     model: {
       uri: "/models/游艇.glb",
       minimumPixelSize: 2000000,
-      maximumScale: 200000,
-      scale: 1,
+      maximumScale: 20000,
+      scale: 0.5,
     },
   });
 }
@@ -49,8 +49,8 @@ export function loadSpaceShuttle(viewer, position) {
     model: {
       uri: "/models/航天飞机.glb",
       minimumPixelSize: 2000000,
-      maximumScale: 200000,
-      scale: 1,
+      maximumScale: 20000,
+      scale: 0.5,
     },
   });
 }

@@ -39,6 +39,7 @@ import {
   drawCone4
 } from "./js/draw.js";
 import { loadSatellite, loadSpaceShuttle, loadYacht } from "./js/models.js";
+import { geoSoT_encode_3D_32bits } from "./js/sot.js";
 
 
 let colorArray = []
@@ -216,8 +217,8 @@ onMounted(() => {
       satellite: Cesium.Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
       ball: Cesium.Cartesian3.fromDegrees(120.0988, 0, 4000),
       circle: Cesium.Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
-      spaceShuttle: Cesium.Cartesian3.fromDegrees(120.0988, 23.123, 5000),
-      yacht: Cesium.Cartesian3.fromDegrees(120.0988, -25.023),
+      spaceShuttle: Cesium.Cartesian3.fromDegrees(120.0988, 23.123, 50000),
+      yacht: Cesium.Cartesian3.fromDegrees(120.0988, -40.023),
     };
 
     /** 加载模型 */
