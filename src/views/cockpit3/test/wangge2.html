@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cesium 网格示例</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.90/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.90/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+</head>
+<body>
+<div id="cesiumContainer" style="width: 100%; height: 100%;"></div>
+<script>
+    var viewer = new Cesium.Viewer('cesiumContainer', {
+        terrainProvider: Cesium.createWorldTerrain()
+    });
+
+    function BSplineInterpolate(t, degree, points, knots, weights, result) {
+        var i, j, s, l;
+        var n = points.length;
+        var d = points[0].length;
+
+        if (degree < 1) throw new Error('Degree must be at least 1');
+        if (degree > (n - 1)) throw new Error('Degree must be less than or equal to point count - 1');
+
+        if (!weights) {
+            weights = [];
+            for (i = 0; i < n; i++) {
+                weights[i] = 1;
+            }
+        }
+
+        if (!knots) {
+            var knots = [];
+            for (i = 0; i < n + degree + 1; i++) {
+                knots[i] = i;
+            }
+        } else {
+            if (knots.length !== n + degree + 1) throw new Error('Invalid knot vector length');
+        }
+
+        var domain = [
+            degree,
+            knots.length - 1 - degree
+        ];
+
+        var low = knots[domain[0]];
+        var high = knots[domain[1]];
+        t = t * (high - low) + low;
+
+        if (t < low || t > high) throw new Error('Out of bounds');
+
+        for (s = domain[0]; s < domain[1]; s++) {
+            if (t >= knots[s] && t <= knots[s + 1]) {
+                break;
+            }
+        }
+
+        var v = [];
+        for (i = 0; i < n; i++) {
+            v[i] = [];
+            for (j = 0; j < d; j++) {
+                v[i][j] = points[i][j] * weights[i];
+            }
+            v[i][d] = weights[i];
+        }
+
+        var alpha;
+        for (l = 1; l <= degree + 1; l++) {
+            for (i = s; i > s - degree - 1 + l; i--) {
+                alpha = (t - knots[i]) / (knots[i + degree + 1 - l] - knots[i]);
+                for (j = 0; j < d + 1; j++) {
+                    v[i][j] = (1 - alpha) * v[i - 1][j] + alpha * v[i][j];
+                }
+            }
+        }
+        var result = result || [];
+        for (i = 0; i < d; i++) {
+            result[i] = v[s][i] / v[s][d];
+        }
+
+        return result;
+    }
+
+    function BInterpolateCurve(points, interPointCount, degree = 3) {
+        let newPoints = []
+        let firstPoint = points[0];
+        let lastPoint = points[points.length - 1];
+        for (let i = 0; i < degree - 1; ++i) {
+            newPoints.push(firstPoint)
+        }
+        newPoints.push(...points)
+        for (let i = 0; i < degree - 1; ++i) {
+            newPoints.push(lastPoint)
+        }
+        let interPoints = []
+        for (let i = 0; i < interPointCount; ++i) {
+            let t = i / (interPointCount - 1)
+            let r = BSplineInterpolate(t, degree, newPoints)
+            interPoints.push(r)
+        }
+        let results = []
+        let basex = firstPoint[0]
+        let stepx = (lastPoint[0] - firstPoint[0]) / (interPointCount - 1)
+        for (let i = 0; i < interPointCount; ++i) {
+            let x = i * stepx + basex
+            for (let j = 0; j < interPoints.length - 1; ++j) {
+                let x0 = interPoints[j][0]
+                let x1 = interPoints[j + 1][0]
+                let y0 = interPoints[j][1]
+                let y1 = interPoints[j + 1][1]
+                if (x0 <= x && x1 >= x) {
+                    results.push([x, (x - x0) / (x1 - x0) * (y1 - y0) + y0])
+                    break
+                }
+            }
+        }
+        while (results.length < interPointCount) {
+            results.push(lastPoint)
+        }
+        return results
+    }
+
+    function BInterpolateSurface(points, cols, rows, outRows, outCols, degree) {
+        let interPoints = [];
+
+        for (let i = 0; i < rows; ++i) {
+            let rowPoints = points.slice(i * cols, (i + 1) * cols);
+            let interpolatedRow = BInterpolateCurve(rowPoints, outCols, degree);
+            interPoints.push(...interpolatedRow);
+        }
+
+        let finalPoints = [];
+        for (let j = 0; j < outCols; ++j) {
+            let columnPoints = [];
+            for (let i = 0; i < rows; ++i) {
+                columnPoints.push(interPoints[i * outCols + j]);
+            }
+            let interpolatedColumn = BInterpolateCurve(columnPoints, outRows, degree);
+            for (let k = 0; k < outRows; ++k) {
+                finalPoints.push(interpolatedColumn[k]);
+            }
+        }
+
+        return finalPoints;
+    }
+
+    function showGeometry() {
+        let posArr = [];
+        let dataPos = [];
+        let rows = 10;
+        let cols = 10;
+
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                posArr.push([i * 0.1, j * 0.1, Math.random() * 10]);
+            }
+        }
+
+        this.rawDbPoints = {
+            cols: cols,
+            rows: rows,
+            point: []
+        };
+
+        this.rawDbPoints.x0 = posArr[0][0];
+        this.rawDbPoints.x1 = posArr[cols - 1][0];
+        this.rawDbPoints.y0 = posArr[0][1];
+        this.rawDbPoints.y1 = posArr[(rows - 1) * cols][1];
+        const multiplePoints = 5;
+        let outCols = parseInt(cols * multiplePoints);
+        let outRows = parseInt(rows * multiplePoints);
+        const SmoothSplineDegree = 3;
+        let smoothPoints = BInterpolateSurface(posArr, cols, rows, outRows, outCols, SmoothSplineDegree);
+        rows *= multiplePoints;
+        cols *= multiplePoints;
+        this.setIndices(rows, cols);
+
+        this.draw(smoothPoints, this.indices, this.lineIndices);
+    }
+
+    function setIndices(rows, cols) {
+        let indices = [];
+        let lineIndices = [];
+        for (let i = 0; i < rows - 1; i++) {
+            for (let j = 0; j < cols - 1; j++) {
+                let index = i * cols + j;
+                indices.push(index);
+                indices.push(index + 1);
+                indices.push(index + cols);
+                indices.push(index + 1);
+                indices.push(index + 1 + cols);
+                indices.push(index + cols);
+                lineIndices.push(index);
+                lineIndices.push(index + 1);
+                lineIndices.push(index);
+                lineIndices.push(index + cols);
+            }
+        }
+        this.indices = new Uint32Array(indices);
+        this.lineIndices = new Uint32Array(lineIndices);
+    }
+
+    function draw(points, indices, lineIndices) {
+        let pos = [];
+        let colorArr = [];
+        points.forEach((p) => {
+            let cartesian = Cesium.Cartesian3.fromDegrees(p[0], p[1], p[2]);
+            pos.push(cartesian.x, cartesian.y, cartesian.z);
+            let color = getRangeColor(p[2]);
+            colorArr.push(color.red, color.green, color.blue, color.alpha);
+        });
+
+        let positions = new Float64Array(pos);
+        let colors = new Float64Array(colorArr);
+        let instances2DMesh = [];
+        let geometry = new Cesium.Geometry({
+            attributes: {
+                position: new Cesium.GeometryAttribute({
+                    componentDatatype: Cesium.ComponentDatatype.DOUBLE,
+                    componentsPerAttribute: 3,
+                    values: positions
+                }),
+                color: new Cesium.GeometryAttribute({
+                    componentDatatype: Cesium.ComponentDatatype.FLOAT,
+                    componentsPerAttribute: 4,
+                    values: colors
+                }),
+            },
+            indices: indices,
+            primitiveType: Cesium.PrimitiveType.TRIANGLES,
+            boundingSphere: Cesium.BoundingSphere.fromVertices(positions),
+        });
+
+        var instanceMesh = new Cesium.GeometryInstance({
+            geometry: geometry,
+        });
+
+        instances2DMesh.push(instanceMesh);
+        viewer.scene.primitives.add(new Cesium.Primitive({
+            geometryInstances: instances2DMesh,
+            appearance: new Cesium.PerInstanceColorAppearance({
+                translucent: true
+            }),
+            asynchronous: false
+        }));
+
+        let instances2DLine = [];
+
+        var geometryLine = new Cesium.Geometry({
+            attributes: {
+                position: new Cesium.GeometryAttribute({
+                    componentDatatype: Cesium.ComponentDatatype.DOUBLE,
+                    componentsPerAttribute: 3,
+                    values: positions
+                }),
+                color: new Cesium.GeometryAttribute({
+                    componentDatatype: Cesium.ComponentDatatype.FLOAT,
+                    componentsPerAttribute: 4,
+                    values: colors
+                }),
+            },
+            indices: lineIndices,
+            primitiveType: Cesium.PrimitiveType.LINES,
+            boundingSphere: Cesium.BoundingSphere.fromVertices(positions),
+        });
+
+        var instanceMeshLine = new Cesium.GeometryInstance({
+            geometry: geometryLine,
+        });
+
+        instances2DLine.push(instanceMeshLine);
+        viewer.scene.primitives.add(new Cesium.Primitive({
+            geometryInstances: instances2DLine,
+            appearance: new Cesium.PolylineColorAppearance({
+                translucent: true
+            }),
+            asynchronous: false
+        }));
+    }
+
+    function getRangeColor(value) {
+        const rangeColor = [
+            Cesium.Color.fromCssColorString('#FF3300'),
+            Cesium.Color.fromCssColorString('#FF6633'),
+            Cesium.Color.fromCssColorString('#FF6666'),
+            Cesium.Color.fromCssColorString('#FF9900'),
+            Cesium.Color.fromCssColorString('#FF9933'),
+            Cesium.Color.fromCssColorString('#FF9966'),
+            Cesium.Color.fromCssColorString('#FFcc00'),
+            Cesium.Color.fromCssColorString('#FFcc66'),
+        ];
+
+        let colorIndex = Math.floor(value % rangeColor.length);
+        let color = rangeColor[colorIndex];
+        return {
+            red: color.red,
+            green: color.green,
+            blue: color.blue,
+            alpha: color.alpha
+        };
+    }
+
+    showGeometry();
+</script>
+</body>
+</html>

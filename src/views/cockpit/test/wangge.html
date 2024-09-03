@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cesium 网格示例</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.90/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.90/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+</head>
+<body>
+<div id="cesiumContainer" style="width: 100%; height: 100%;"></div>
+<script>
+    // 初始化Cesium Viewer
+    var viewer = new Cesium.Viewer('cesiumContainer', {
+        terrainProvider: Cesium.createWorldTerrain()
+    });
+
+    // 网格的尺寸和位置
+    var gridWidth = 10;
+    var gridHeight = 10;
+    var cellSize = 1000; // 每个单元格的大小（米）
+    var gridCenter = Cesium.Cartesian3.fromDegrees(-75.59777, 40.03883); // 网格中心的经纬度
+
+    // 生成网格
+    var positions = [];
+    for (var i = 0; i <= gridWidth; i++) {
+        for (var j = 0; j <= gridHeight; j++) {
+            var position = Cesium.Cartesian3.fromDegrees(
+                -75.59777 + i * cellSize / 111319.9, // 经度
+                40.03883 + j * cellSize / 111319.9  // 纬度
+            );
+            positions.push(position);
+        }
+    }
+
+    // 创建网格线
+    for (var i = 0; i <= gridWidth; i++) {
+        var polylinePositions = [];
+        for (var j = 0; j <= gridHeight; j++) {
+            polylinePositions.push(positions[i * (gridHeight + 1) + j]);
+        }
+        viewer.entities.add({
+            polyline: {
+                positions: polylinePositions,
+                width: 2,
+                material: Cesium.Color.WHITE
+            }
+        });
+    }
+
+    for (var j = 0; j <= gridHeight; j++) {
+        var polylinePositions = [];
+        for (var i = 0; i <= gridWidth; i++) {
+            polylinePositions.push(positions[i * (gridHeight + 1) + j]);
+        }
+        viewer.entities.add({
+            polyline: {
+                positions: polylinePositions,
+                width: 2,
+                material: Cesium.Color.WHITE
+            }
+        });
+    }
+
+    // 示例数据：频率和能量
+    var data = [
+        { frequency: 10, energy: 100 },
+        { frequency: 20, energy: 200 },
+        // ...
+    ];
+
+    // 将频率和能量信息映射到网格上
+    for (var i = 0; i < gridWidth; i++) {
+        for (var j = 0; j < gridHeight; j++) {
+            var value = data[i * gridHeight + j];
+            var color = Cesium.Color.fromHsl(0.6 - value.frequency / 100, 1.0, 0.5); // 根据频率计算颜色
+            viewer.entities.add({
+                position: positions[i * (gridHeight + 1) + j],
+                point: {
+                    pixelSize: 10,
+                    color: color
+                },
+                label: {
+                    text: `E: ${value.energy}`,
+                    font: '14pt monospace',
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                    pixelOffset: new Cesium.Cartesian2(0, -15)
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,29 +1,40 @@
-import { defineConfig } from "vite";
-import { viteStaticCopy } from "vite-plugin-static-copy";
+import {defineConfig, loadEnv} from 'vite'
+import path from 'path'
+import createVitePlugins from './vite/plugins'
 
-const cesiumSource = "node_modules/cesium/Build/Cesium";
-// This is the base url for static files that CesiumJS needs to load.
-// Set to an empty string to place the files at the site's root path
-const cesiumBaseUrl = "cesiumStatic";
-
-// https://vitejs.dev/config/
-export default defineConfig({
-  define: {
-    // Define relative base path in cesium for loading assets
-    // https://vitejs.dev/config/shared-options.html#define
-    CESIUM_BASE_URL: JSON.stringify(`/${cesiumBaseUrl}`),
-  },
-  plugins: [
-    // Copy Cesium Assets, Widgets, and Workers to a static directory.
-    // If you need to add your own static files to your project, use the `public` directory
-    // and other options listed here: https://vitejs.dev/guide/assets.html#the-public-directory
-    viteStaticCopy({
-      targets: [
-        { src: `${cesiumSource}/ThirdParty`, dest: cesiumBaseUrl },
-        { src: `${cesiumSource}/Workers`, dest: cesiumBaseUrl },
-        { src: `${cesiumSource}/Assets`, dest: cesiumBaseUrl },
-        { src: `${cesiumSource}/Widgets`, dest: cesiumBaseUrl },
-      ],
-    }),
-  ],
-});
+export default defineConfig(({mode, command}) => {
+    const env = loadEnv(mode, process.cwd())
+    return {
+        plugins: createVitePlugins(env, command === 'build'),
+        resolve: {
+            // https://cn.vitejs.dev/config/#resolve-alias
+            alias: {
+                // 设置路径
+                '~': path.resolve(__dirname, './'),
+                // 设置别名
+                '@': path.resolve(__dirname, './src')
+            },
+            // https://cn.vitejs.dev/config/#resolve-extensions
+            extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue']
+        },
+        // vite 相关配置
+        server: {
+            port: 8088,
+            host: true,
+            open: true,
+            proxy: {
+                // https://cn.vitejs.dev/config/#server-proxy
+                '/dev-api': {
+                    target: 'http://localhost:9004',
+                    changeOrigin: true,
+                    rewrite: (p) => p.replace(/^\/dev-api/, '')
+                },
+                "/api": {
+                    target: "https://test.honlife.com.cn",// 测试,
+                    changeOrigin: true,
+                    rewrite: (p) => p.replace(/^\/api/, '')
+                },
+            },
+        },
+    }
+})

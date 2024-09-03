@@ -1,50 +1,47 @@
 {
-  "name": "cesiumjs-vite-example",
-  "version": "1.0.0",
-  "description": "The minimal recommended setup for an app using Cesium with Vite.",
-  "homepage": "https://cesium.com/platform/cesiumjs/",
-  "license": "Apache-2.0",
-  "author": {
-    "name": "Cesium GS, Inc.",
-    "url": "https://cesium.com"
+  "name": "yijing",
+  "version": "3.8.1",
+  "description": "管理系统",
+  "author": "移景",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build:prod": "vite build",
+    "build:stage": "vite build --mode staging",
+    "preview": "vite preview"
   },
-  "keywords": [
-    "cesium",
-    "CesiumJS",
-    "vite",
-    "example"
-  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/CesiumGS/cesium-vite-example.git"
-  },
-  "type": "module",
-  "scripts": {
-    "prepare": "husky install",
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "eslint": "eslint \"./**/*.js\" \"./**/*.html\" --cache --quiet",
-    "prettier": "prettier --write --no-config \"**/*\"",
-    "prettier-check": "prettier --check --no-config \"**/*\""
-  },
-  "devDependencies": {
-    "eslint": "^8.56.0",
-    "eslint-config-cesium": "^10.0.2",
-    "eslint-plugin-es": "^4.1.0",
-    "eslint-plugin-html": "^7.1.0",
-    "husky": "^8.0.3",
-    "prettier": "^3.2.4",
-    "vite": "^5.0.8",
-    "vite-plugin-static-copy": "^1.0.0"
+    "url": ""
   },
   "dependencies": {
-    "cesium": "^1.114.0"
+    "@element-plus/icons-vue": "0.2.6",
+    "@turf/turf": "^6.5.0",
+    "@vueuse/core": "^8.0.1",
+    "axios": "0.24.0",
+    "echarts": "5.2.2",
+    "element-plus": "2.0.1",
+    "file-saver": "2.0.5",
+    "fuse.js": "6.4.6",
+    "js-cookie": "3.0.1",
+    "jsencrypt": "3.2.1",
+    "lodash": "^4.17.21",
+    "mitt": "^3.0.1",
+    "nprogress": "0.2.0",
+    "satellite.js": "^5.0.0",
+    "vue": "3.2.26",
+    "vue-cropper": "1.0.2",
+    "vue-router": "4.0.12",
+    "vuex": "4.0.2"
   },
-  "lint-staged": {
-    "*.{js,html}": [
-      "eslint --cache --quiet",
-      "prettier --write --no-config"
-    ]
+  "devDependencies": {
+    "@vitejs/plugin-vue": "1.9.4",
+    "@vue/compiler-sfc": "3.2.22",
+    "sass": "1.45.0",
+    "unplugin-auto-import": "0.5.3",
+    "vite": "2.6.14",
+    "vite-plugin-compression": "0.3.6",
+    "vite-plugin-svg-icons": "1.0.5",
+    "vite-plugin-vue-setup-extend": "0.1.0"
   }
 }

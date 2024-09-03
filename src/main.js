@@ -1,40 +1,78 @@
-import { Cartesian3, Ion, Terrain, Viewer } from "cesium";
-import "cesium/Build/Cesium/Widgets/widgets.css";
-import { loadBall } from "./ball";
-import { loadCzml } from "./czml";
-import {
-  drawCircleAroundSatellite,
-  drawCone,
-  drawCone3,
-  drawCone4,
-  drawLine,
-} from "./draw";
-import { loadSatellite, loadSpaceShuttle, loadYacht } from "./models";
-import "./style.css";
+import {createApp} from 'vue'
 
-Ion.defaultAccessToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJjMGRmMDMwMS1kNWExLTQ0ODgtYTFiYi0zMDJkZjMxMjUxNGQiLCJpZCI6MjI4MzY4LCJpYXQiOjE3MjEwMDgwODR9.8MaR-sOFXpZ3G3i21O_3J4XpogxbQgOpnqg7uznsrPU";
+import Cookies from 'js-cookie'
 
-const viewer = new Viewer("cesiumContainer", {
-  terrain: Terrain.fromWorldTerrain(),
-});
+import ElementPlus from 'element-plus'
+import locale from 'element-plus/lib/locale/lang/zh-cn' // 中文语言
 
-/** 模型位置 */
-const positions = {
-  satellite: Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
-  ball: Cartesian3.fromDegrees(120.0988, 0, 4000),
-  circle: Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
-  spaceShuttle: Cartesian3.fromDegrees(120.0988, 23.123, 5000),
-  yacht: Cartesian3.fromDegrees(120.0988, -25.023),
-};
+import '@/assets/styles/index.scss' // global css
 
-/** 加载模型 */
-loadCzml(viewer);
-loadSatellite(viewer, positions["satellite"]); // 卫星
-loadBall(viewer, positions["ball"]); // 地面接收站球体
-loadSpaceShuttle(viewer, positions["spaceShuttle"]); // 航天飞机
-loadYacht(viewer, positions["yacht"]); // 游艇
+import App from './App'
+import store from './store'
+import router from './router'
+import directive from './directive' // directive
 
-/** 绘制线条 */
-drawCircleAroundSatellite(viewer, positions["circle"]); // 卫星轨迹线
-drawCone4(viewer); // 卫星信号四棱锥
+
+// 注册指令
+import plugins from './plugins' // plugins
+
+// svg图标
+import 'virtual:svg-icons-register'
+import SvgIcon from '@/components/SvgIcon'
+import elementIcons from '@/components/SvgIcon/svgicon'
+
+import './permission' // permission control
+
+import {useDict} from '@/utils/dict'
+import {parseTime, resetForm, addDateRange, handleTree, selectDictLabel} from '@/utils/ruoyi'
+
+// 分页组件
+import Pagination from '@/components/Pagination'
+// 自定义表格工具组件
+import RightToolbar from '@/components/RightToolbar'
+// 文件上传组件
+import FileUpload from "@/components/FileUpload"
+// 图片上传组件
+import ImageUpload from "@/components/ImageUpload"
+// 图片预览组件
+import ImagePreview from "@/components/ImagePreview"
+// 自定义树选择组件
+import TreeSelect from '@/components/TreeSelect'
+// 字典标签组件
+import DictTag from '@/components/DictTag'
+
+const app = createApp(App)
+
+// 全局方法挂载
+app.config.globalProperties.useDict = useDict
+app.config.globalProperties.parseTime = parseTime
+app.config.globalProperties.resetForm = resetForm
+app.config.globalProperties.handleTree = handleTree
+app.config.globalProperties.addDateRange = addDateRange
+app.config.globalProperties.selectDictLabel = selectDictLabel
+
+// 全局组件挂载
+app.component('DictTag', DictTag)
+app.component('Pagination', Pagination)
+app.component('TreeSelect', TreeSelect)
+app.component('FileUpload', FileUpload)
+app.component('ImageUpload', ImageUpload)
+app.component('ImagePreview', ImagePreview)
+app.component('RightToolbar', RightToolbar)
+
+app.use(router)
+app.use(store)
+app.use(plugins)
+app.use(elementIcons)
+app.component('svg-icon', SvgIcon)
+
+directive(app)
+
+// 使用element-plus 并且设置全局的大小
+app.use(ElementPlus, {
+  locale: locale,
+  // 支持 large、default、small
+  size: Cookies.get('size') || 'default'
+})
+
+app.mount('#app')

@@ -1,0 +1,49 @@
+.tooltipdiv-inner {
+  padding: 3px 8px;
+}
+
+/* 向左 */
+.toolTip-left {
+  position: absolute;
+  width: 320px;
+  min-height: 55px;
+  border: 2px solid #00C9D2;
+  border-radius: 20px;
+  background-color: rgba(30, 49, 74, 0.6);
+}
+
+.toolTip-left:before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-right: 20px solid #00C9D2;
+}
+
+.con {
+  font-size: 14px;
+  color: #ffff;
+  line-height: 20px;
+}
+
+.tooltipdiv-inner .table {
+  display: table;
+}
+
+.tooltipdiv-inner .row {
+  display: table-row;
+}
+
+.tooltipdiv-inner .name {
+  display: table-cell;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.tooltipdiv-inner .value {
+  display: table-cell;
+}

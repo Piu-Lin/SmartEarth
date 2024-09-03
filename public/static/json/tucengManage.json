@@ -1,0 +1,47 @@
+[
+  {
+    "label": "基础图层",
+    "parId": "0",
+    "value": 0,
+    "id": "1",
+    "type": "XT_IMAGE_LAYER",
+    "children": [
+      {
+        "label": "影像图层",
+        "parId": "1",
+        "value": 1,
+        "id": "3",
+        "type": "XT_IMAGE_LAYER",
+        "children": [
+          {
+            "label": "天地图卫星影像",
+            "parId": "3",
+            "value": 2,
+            "id": "5",
+            "type": "XT_IMAGE",
+            "mapName": "TDT_IMG",
+            "children": []
+          },
+          {
+            "label": "天地图黑色卫星影像",
+            "parId": "3",
+            "value": 2,
+            "id": "6",
+            "type": "XT_IMAGE",
+            "mapName": "TDT_DARK",
+            "children": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "label": "自定义图层",
+    "parId": "0",
+    "value": 0,
+    "id": "2",
+    "type": "XT_CUSTOM_LAYER",
+    "children": [
+    ]
+  }
+]
