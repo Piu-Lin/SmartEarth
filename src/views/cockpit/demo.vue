@@ -34,6 +34,7 @@ import { satellite } from "./js/weixingGuiji.js";
 
 import { loadBall } from "./js/ball.js";
 import { loadCzml } from "./js/czml.js";
+import { leftClickHandler } from "./js/eventHandler.js";
 import {
   drawCircleAroundSatellite,
   drawCone4
@@ -217,7 +218,7 @@ onMounted(() => {
       satellite: Cesium.Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
       ball: Cesium.Cartesian3.fromDegrees(120.0988, 0, 4000),
       circle: Cesium.Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
-      spaceShuttle: Cesium.Cartesian3.fromDegrees(120.0988, 23.123, 50000),
+      spaceShuttle: Cesium.Cartesian3.fromDegrees(120.0988, 23.123, 100 * 1000),
       yacht: Cesium.Cartesian3.fromDegrees(120.0988, -40.023),
     };
 
@@ -226,15 +227,20 @@ onMounted(() => {
     loadSatellite(bigScreenMap.value.viewer, positions["satellite"]); // 卫星
     loadBall(bigScreenMap.value.viewer, positions["ball"]); // 地面接收站球体
     loadSpaceShuttle(bigScreenMap.value.viewer, positions["spaceShuttle"]); // 航天飞机
-    loadYacht(bigScreenMap.value.viewer, positions["yacht"]); // 游艇
+    loadYacht(bigScreenMap.value.viewer, positions["yacht"], 1); // 游艇
 
     /** 绘制线条 */
     drawCircleAroundSatellite(bigScreenMap.value.viewer, positions["circle"]); // 卫星轨迹线
-    drawCone4(bigScreenMap.value.viewer); // 卫星信号四棱锥
+    drawCone4(bigScreenMap.value.viewer); // 卫星信号四棱锥，调节segments数量以及step_i控制绘制质量
+
+    // 已经在BaseHandler里实现该效果
+    // leftClickHandler(bigScreenMap.value.viewer) // 左键单击显示地理位置
+
     bus.on('radarColor', (radarColor) => {
       colorArray = rgbaStringToArray(radarColor.value)
       saomiao(bigScreenMap.value.viewer, bigScreenMap.value, colorArray);
     })
+
 
     bus.on('add', () => {
       addPlane()

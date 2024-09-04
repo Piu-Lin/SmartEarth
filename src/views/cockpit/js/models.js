@@ -23,7 +23,7 @@ export function loadSatellite(viewer, position) {
  * @param {Cartesian3} position
  * @returns {Entity}
  */
-export function loadYacht(viewer, position) {
+export function loadYacht(viewer, position, scale = 0.5) {
   return viewer.entities.add({
     name: "yacht",
     position: position,
@@ -31,7 +31,7 @@ export function loadYacht(viewer, position) {
       uri: "/models/游艇.glb",
       minimumPixelSize: 2000000,
       maximumScale: 20000,
-      scale: 0.5,
+      scale: scale,
     },
   });
 }
@@ -42,7 +42,7 @@ export function loadYacht(viewer, position) {
  * @param {Cartesian3} position
  * @returns {Entity}
  */
-export function loadSpaceShuttle(viewer, position) {
+export function loadSpaceShuttle(viewer, position, scale) {
   return viewer.entities.add({
     name: "space shuttle",
     position: position,
@@ -50,7 +50,7 @@ export function loadSpaceShuttle(viewer, position) {
       uri: "/models/航天飞机.glb",
       minimumPixelSize: 2000000,
       maximumScale: 20000,
-      scale: 0.5,
+      scale: scale,
     },
   });
 }

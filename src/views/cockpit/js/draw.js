@@ -351,11 +351,10 @@ export function drawCone3(viewer) {
   }
 }
 
-export function drawCone4(viewer) {
+export function drawCone4(viewer, segments = 30, step_i = 8) {
   const satellitePosition = Cesium.Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000);
   const earthSurfacePosition = Cesium.Cartesian3.fromDegrees(120.0988, 0);
 
-  const segments = 50;
   const apexAngle = Cesium.Math.toRadians(42.6); // 转换为弧度
   const coneHeight = Cesium.Cartesian3.distance(
     satellitePosition,
@@ -427,7 +426,7 @@ export function drawCone4(viewer) {
       );
 
       // 生成圆锥表面的圆周上的点
-      for (let j = 0; j < 360; j += 5) {
+      for (let j = 0; j < 360; j += step_i) {
         // 每1度一个点，覆盖圆周
         const angle = Cesium.Math.toRadians(j);
 

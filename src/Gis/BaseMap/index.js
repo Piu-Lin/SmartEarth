@@ -21,8 +21,8 @@ export default class BaseMap {
       navigationHelpButton: false, // 是否显示帮助信息控件
       sceneModePicker: false, // 是否显示投影方式控件
       baseLayerPicker: false, // 是否显示图层选择控件
-      timeline: false, // 是否显示时间线控件
-      animation: false, // 是否显示左下角的动画控件
+      timeline: true, // 是否显示时间线控件
+      animation: true, // 是否显示左下角的动画控件
       infoBox: false,
       selectionIndicator: false,
       imageryProvider: false,
