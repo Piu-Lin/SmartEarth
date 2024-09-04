@@ -31,9 +31,9 @@ export function loadYacht(viewer, position) {
     position: position,
     model: {
       uri: "/models/游艇.glb",
-      minimumPixelSize: 2000000,
-      maximumScale: 200000,
-      scale: 1,
+      minimumPixelSize: 10000,
+      maximumScale: 10000,
+      scale: 0.3,
     },
   });
 }

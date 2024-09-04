@@ -20,7 +20,7 @@ const positions = {
   ball: Cartesian3.fromDegrees(120.0988, 0, 4000),
   circle: Cartesian3.fromDegrees(120.0988, 0, 20200 * 1000),
   spaceShuttle: Cartesian3.fromDegrees(120.0988, 23.123, 5000),
-  yacht: Cartesian3.fromDegrees(120.0988, -25.023),
+  yacht: Cartesian3.fromDegrees(120.0988, -40.023),
 };
 
 /** 加载模型 */
