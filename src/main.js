@@ -2,10 +2,10 @@ import { Cartesian3, Ion, Terrain, Viewer } from "cesium";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import { loadBall } from "./ball";
 import { loadCzml } from "./czml";
-import { drawCircleAroundSatellite, drawCone4 } from "./draw";
+import { createGridDrawer, drawCircleAroundSatellite, drawCone4 } from "./draw";
+import { leftClickHandler } from "./eventHandler";
 import { loadSatellite, loadSpaceShuttle, loadYacht } from "./models";
 import "./style.css";
-import { leftClickHandler } from "./eventHandler";
 
 Ion.defaultAccessToken =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5NmM4ODRiMC05NzUwLTRkMGUtOTkxMS05ZGFhNTAyMWEzM2QiLCJpZCI6MjI4MzY4LCJpYXQiOjE3MjU0MzI5OTV9._rqnZtZbsaCVfb4XY_U2GpR-gmHy_iMZ2ebf-VigRiE";
@@ -33,6 +33,16 @@ loadYacht(viewer, positions["yacht"]); // 游艇
 /** 绘制线条 */
 drawCircleAroundSatellite(viewer, positions["circle"]); // 卫星轨迹线
 drawCone4(viewer); // 卫星信号四棱锥
+
+/** 绘制网格 */
+let showGrid = false;
+const drawGrid = createGridDrawer(viewer); // 这里返回的是一个闭包，为了实现静态函数的效果
+document
+  .querySelector("#showGridButton")
+  .addEventListener("click", function showGridButtonClick() {
+    drawGrid(showGrid);
+    showGrid = !showGrid;
+  });
 
 /** 左键单击事件 */
 leftClickHandler(viewer);

@@ -1,4 +1,11 @@
-import { Cartesian3, Math as CesiumMath, Color, Entity, Matrix3 } from "cesium";
+import {
+  Cartesian3,
+  Math as CesiumMath,
+  Color,
+  Entity,
+  Matrix3,
+  VerticalOrigin,
+} from "cesium";
 import { atmosphericLoss, earthBlockLoss, freeSpaceLoss } from "./loss";
 import { geoSoT_encode_3D_32bits } from "./sot";
 
@@ -310,4 +317,102 @@ export function drawCone4(viewer) {
   for (let angle = -rotationAngle; angle < rotationAngle; angle += 0.02) {
     createConeSurface(Matrix3.fromRotationZ(angle));
   }
+}
+
+export function createGridDrawer(viewer) {
+  const LineRGB = { 0: "", 1: "#33FFFF", 2: "#FF33FF" };
+  const createdEntities = [];
+
+  function drawGrid(hidden = false) {
+    if (hidden) {
+      // Hide all previously created entities
+      createdEntities.forEach((entity) => {
+        entity.show = false;
+      });
+      return;
+    }
+
+    let markk = 0;
+    const entities = viewer.entities;
+
+    for (let pHeight = 100000; pHeight < 1000000; pHeight += 500000) {
+      markk += 1;
+      for (let lang = -180, level = 0; lang <= 180; lang += 10) {
+        let text = `p${level}`;
+        if (lang === 0) {
+          text = "p0";
+        } else if (lang === -180) {
+          text = "p0";
+        }
+        level += 1;
+
+        const entity = entities.add({
+          polyline: {
+            positions: Cartesian3.fromDegreesArrayHeights([
+              lang,
+              -90,
+              pHeight,
+              lang,
+              0,
+              pHeight,
+              lang,
+              90,
+              pHeight,
+            ]),
+            width: 1.0,
+            material: Color.fromCssColorString(LineRGB[markk]),
+          },
+          label: {
+            text: text,
+            verticalOrigin: VerticalOrigin.TOP,
+            font: "12px sans-serif",
+            fillColor: Color.WHITE,
+          },
+        });
+
+        createdEntities.push(entity);
+
+        for (let labellevel = -90; labellevel <= 90; labellevel += 10) {
+          const labelEntity = entities.add({
+            position: Cartesian3.fromDegrees(lang + 5, labellevel),
+            label: {
+              text: `p${labellevel + level + 90}`,
+              verticalOrigin: VerticalOrigin.TOP,
+              font: "12px sans-serif",
+              fillColor: Color.WHITE,
+            },
+          });
+
+          createdEntities.push(labelEntity);
+        }
+      }
+
+      const langS = [];
+      for (let lang = -180; lang <= 180; lang += 5) {
+        langS.push(lang);
+      }
+
+      for (let lat = -80; lat <= 80; lat += 10) {
+        const polylineEntity = entities.add({
+          polyline: {
+            positions: Cartesian3.fromDegreesArrayHeights(
+              langS
+                .map((long) => {
+                  return [long, lat, pHeight].join(",");
+                })
+                .join(",")
+                .split(",")
+                .map((item) => Number(item)),
+            ),
+            width: 1.0,
+            material: Color.fromCssColorString(LineRGB[markk]),
+          },
+        });
+
+        createdEntities.push(polylineEntity);
+      }
+    }
+  }
+
+  return drawGrid;
 }
