@@ -1,6 +1,4 @@
-import {
-    Math as CesiumMath
-} from "cesium";
+import { Math as CesiumMath } from "cesium";
 
 /**
  * 计算自由空间传播损耗
@@ -8,7 +6,7 @@ import {
  * @param {number} d - 卫星与接收机之间的距离（米）
  * @returns {number} 自由空间传播损耗（dB）
  */
-function freeSpaceLoss(lambda, d) {
+export function freeSpaceLoss(lambda, d) {
   return 20 * Math.log10(lambda / (4 * Math.PI * d));
 }
 
@@ -21,7 +19,7 @@ function freeSpaceLoss(lambda, d) {
  * @param {number} R_e - 地球半径（米）
  * @returns {number} 大气层损耗（dB）
  */
-function atmosphericLoss(beta, s, l_O_SR, h_F2, R_e) {
+export function atmosphericLoss(beta, s, l_O_SR, h_F2, R_e) {
   if (l_O_SR > h_F2 + R_e) {
     return 0;
   }
@@ -38,7 +36,7 @@ function atmosphericLoss(beta, s, l_O_SR, h_F2, R_e) {
  * @param {number} R_e - 地球半径（米）
  * @returns {number} 地球遮挡损耗（dB）
  */
-function earthBlockLoss(l_O_SR, R_e) {
+export function earthBlockLoss(l_O_SR, R_e) {
   return l_O_SR > R_e ? 0 : -Infinity;
 }
 
@@ -55,7 +53,7 @@ function earthBlockLoss(l_O_SR, R_e) {
  * @param {number} R_e - 地球半径（米）
  * @returns {number} 总损耗（dB）
  */
-function totalLoss(
+export function totalLoss(
   longitude,
   latitude,
   height,
