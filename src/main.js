@@ -8,11 +8,7 @@ import { loadSatellite, loadSpaceShuttle, loadYacht } from "./models";
 import "./style.css";
 
 Ion.defaultAccessToken =
-<<<<<<< Updated upstream
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5NmM4ODRiMC05NzUwLTRkMGUtOTkxMS05ZGFhNTAyMWEzM2QiLCJpZCI6MjI4MzY4LCJpYXQiOjE3MjU0MzI5OTV9._rqnZtZbsaCVfb4XY_U2GpR-gmHy_iMZ2ebf-VigRiE";
-=======
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwNDgxMDhhNS1hN2VhLTRkMWItOWYzZS1mOGI0Yjg2ZTE3MDQiLCJpZCI6ODkxNzYsImlhdCI6MTY0OTY1OTEwNX0.q313rIpV_E1OtO1ftJtSGkRknti6QhJVETDZd_mGVIQ";
->>>>>>> Stashed changes
 
 const viewer = new Viewer("cesiumContainer", {
   terrain: Terrain.fromWorldTerrain(),
