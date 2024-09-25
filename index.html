@@ -10,7 +10,41 @@
       class="absolute right-0 top-[2rem] z-50 w-[16rem] h-[8rem] border-1 p-4 text-white"
       id="position"
     ></div>
-    <button id="showGridButton" class="absolute left-0 top-[2rem] z-50 w-[16rem] h-[8rem] border-1 text-white">显示网格</button>
-    <script type="module" src="/src/main.js"></script>
+    <!-- <button id="showGridButton" class="absolute left-0 top-[2rem] z-50 w-[16rem] h-[8rem] border-1 text-white">显示网格</button> -->
+     <div class="wanggeBox">
+      <span class="gildinputLable">网格经度起点: </span><input id="StartLongitudeGrid"  class="gildinput"  type="text" value="-180"/>
+      <span class="gildinputLable">网格经度终点: </span><input id="EndtLongitudeGrid" class="gildinput" type="text" value="180"/>
+      <span class="gildinputLable">网格经度间隔: </span><input id="LongitudeIntervalGrid" class="gildinput" type="text" value="10"/>
+      <span class="gildinputLable">网格纬度起点: </span><input id="StartLatitudeGrid" class="gildinput" type="text" value="-90"/>
+      <span class="gildinputLable">网格纬度终点: </span><input id="EndLatitudeGrid" class="gildinput" type="text" value="90"/>
+      <span class="gildinputLable">网格纬度间隔: </span><input id="LatitudeIntervalGrid" class="gildinput" type="text" value="10"/>
+      <span class="gildinputLable">网格高度间隔: </span><input id="HeightIntervalGrid" class="gildinput" type="text" value="10000"/>
+      <span class="gildinputLable">网格高度终点: </span><input id="endHeightGrid" class="gildinput" type="text" value="20000"/>
+      <div>&nbsp;</div>
+      <div id="updateWg" class="updateW">更新网格数据</div>
+    </div>
+    <script type="module" src="/src/wange.js"></script>
   </body>
+  <style>
+    .wanggeBox{
+      position: absolute;
+      top:10px;
+      left: 10px;
+      z-index: 10;
+      width: 160px;
+    }
+    .gildinputLable{
+      width:30px;
+    }
+    .updateW{
+      cursor: pointer;
+    }
+    .gildinput{
+      Background-color: transparent;
+      width: 50px;
+    }
+  </style>
+  <script>
+  
+  </script>
 </html>
