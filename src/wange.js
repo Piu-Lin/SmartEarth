@@ -28,15 +28,15 @@ let grading=0
 
 let StartLongitudeGrid=-90; // 网格的起始经度
 let EndtLongitudeGrid=180; // 网格的经度终点
-let LongitudeIntervalGrid = 10 //网格的经度间隔
+let LongitudeIntervalGrid = 1 //网格的经度间隔
 
 let StartLatitudeGrid = -90; // 网格的起始纬度
 let EndLatitudeGrid = 90
-let LatitudeIntervalGrid = 10 //网格的纬度度间隔
+let LatitudeIntervalGrid = 1 //网格的纬度度间隔
 
 
-let endHeightGrid = 2000000;// 网格的最终高度
-let HeightIntervalGrid=1000000; // 网格的高度间隔
+let endHeightGrid = 200000;// 网格的最终高度
+let HeightIntervalGrid=180000; // 网格的高度间隔
 
 let GridLines=[]
 
@@ -71,7 +71,7 @@ function CreateGrid(){
                 vStartLongitudeGrid,
                 vStartLatitudeGrid+LatitudeIntervalGrid,
               ]),
-              extrudedHeight: HeightIntervalGrid,
+              extrudedHeight: vHeightGrid+HeightIntervalGrid,
               perPositionHeight: false,
               height:vHeightGrid,
               material: Color.BLUE.withAlpha(0.1),
@@ -108,3 +108,80 @@ document.getElementById("updateWg").addEventListener("click", function(){
   endHeightGrid = Number(document.getElementById("endHeightGrid").value)
   CreateGrid();
 });
+
+let eleromaLon=-105.0 // 电磁锥体网格经度
+let eleromaLat=40.0 // 电磁锥体网格纬度
+let eleromaCenter= new Cartesian3.fromDegrees(eleromaLon,eleromaLat) //网格的中心点
+let eleromaBotRadius=900000.0 //电磁锥体网格半径
+
+let eleromaHeight=900000 // 电磁锥体高度
+
+
+
+// viewer.entities.add({
+//   name: "Red cone",
+//   position: Cartesian3.fromDegrees(eleromaLon, eleromaLat, eleromaHeight),
+//   cylinder: {
+//     length: eleromaHeight*2,
+//     topRadius: 0,
+//     bottomRadius: eleromaBotRadius,
+//     material: Color.RED.withAlpha(0.3),
+//     // outline: true,
+//     // outlineColor: Color.MAGENTA,
+//   },
+// });
+for(let veleromaHeight=0;veleromaHeight<=eleromaHeight*2;veleromaHeight+=HeightIntervalGrid){
+  let veleromaBotRadius=eleromaBotRadius*(1-(veleromaHeight/(eleromaHeight*2)))
+  
+  let BoxColor = 1-(veleromaHeight/(eleromaHeight*2))>0.4?Color.WHITE.withAlpha(0.9):Color.GREEN.withAlpha(0.7)
+  // let BoxColor=Color.WHITE.withAlpha(0.1)
+  // console.log(BoxColor)
+  for(let veleromaLat=eleromaLat-veleromaBotRadius*0.00000899;
+    veleromaLat<eleromaLat+veleromaBotRadius*0.00000899;
+    veleromaLat+=LatitudeIntervalGrid
+  ){
+    for (
+      let veleromaLon=eleromaLon-veleromaBotRadius*0.00001141;
+      veleromaLon<eleromaLon+veleromaBotRadius*0.00001141;
+      veleromaLon+=LongitudeIntervalGrid
+    ){
+      if(
+        Cartesian3.distance(eleromaCenter,Cartesian3.fromDegrees(veleromaLon,veleromaLat))>veleromaBotRadius || 
+        Cartesian3.distance(eleromaCenter,Cartesian3.fromDegrees(veleromaLon+LongitudeIntervalGrid,veleromaLat))>veleromaBotRadius || 
+        Cartesian3.distance(eleromaCenter,Cartesian3.fromDegrees(veleromaLon+LongitudeIntervalGrid,veleromaLat+LatitudeIntervalGrid))>veleromaBotRadius || 
+        Cartesian3.distance(eleromaCenter,Cartesian3.fromDegrees(veleromaLon,veleromaLat+LatitudeIntervalGrid))>veleromaBotRadius 
+      ){
+        continue;
+      }
+      viewer.entities.add({
+        name: "电磁网格",
+        // description:"经纬度："+(vStartLongitudeGrid+LongitudeIntervalGrid)+","+(vStartLatitudeGrid+LatitudeIntervalGrid),
+        polygon: {
+          hierarchy: Cartesian3.fromDegreesArray([
+            veleromaLon,
+            veleromaLat,
+            
+            veleromaLon+LongitudeIntervalGrid,
+            veleromaLat,
+      
+            veleromaLon+LongitudeIntervalGrid,
+            veleromaLat+LatitudeIntervalGrid,     
+                          
+            veleromaLon,
+            veleromaLat+LatitudeIntervalGrid,
+          ]),
+
+          extrudedHeight: (veleromaHeight/2)+HeightIntervalGrid,
+          height:veleromaHeight/2,
+          material: BoxColor,
+          outline: true,
+          outlineColor: Color.BLACK.withAlpha(0.2),
+          arcType: ArcType.RHUMB,
+        },
+      })
+    }
+  }
+}
+
+
+
