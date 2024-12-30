@@ -11,7 +11,7 @@ export function loadCzml(viewer) {
   const dataSource = new CzmlDataSource();
   viewer.dataSources.add(dataSource);
   dataSource
-    .load("/asd.czml")
+    .load("/simple.czml")
     .then(() => {
       const Geoeye1entity = dataSource.entities.getById("Satellite/Geoeye1");
       const ISSentity = dataSource.entities.getById("Satellite/ISS");

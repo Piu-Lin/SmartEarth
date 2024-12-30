@@ -3,12 +3,6 @@ import { Cartesian3, Ion, Terrain, Viewer,Color ,ArcType,Entity} from "cesium";
 import "./style.css";
 import "cesium/Build/Cesium/Widgets/widgets.css";
 
-Ion.defaultAccessToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI5NmM4ODRiMC05NzUwLTRkMGUtOTkxMS05ZGFhNTAyMWEzM2QiLCJpZCI6MjI4MzY4LCJpYXQiOjE3MjU0MzI5OTV9._rqnZtZbsaCVfb4XY_U2GpR-gmHy_iMZ2ebf-VigRiE";
-
-const viewer = new Viewer("cesiumContainer", {
-  terrain: Terrain.fromWorldTerrain(),
-});
 
 const numberToNo = {
   0:[1,1],
